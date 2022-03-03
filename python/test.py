@@ -1,10 +1,19 @@
 import mymodule as mm
+import re
 
 def main():
     path = "IndianFoodDatasetxls.xlsx"
     contents = mm.read_xlsx(path, 28)
     labels, recipes = extract_data(contents, 28)
-    print (recipes[24])
+    results = []
+    for i in range(len(recipes)):
+        if type(search_ingredient("mango", recipes[i])) == None:
+            pass
+        else:
+            results.append(recipes[i])
+            print(results[i].name)
+            print(results[i].ingredients_e)
+            
 
 def extract_data(contents, num_rows=None):
     labels = contents[0]
@@ -24,8 +33,8 @@ class Recipe:
         self.uid = uid
         self.name_h = name_h
         self.name_e = name_e
-        self.ingredients_h = str(ingredients_h).split(",")
-        self.ingredients_e = str(ingredients_e).split(",")
+        self.ingredients_h = ingredients_h
+        self.ingredients_e = ingredients_e
         self.prep = int(prep)
         self.cook = int(cook)
         self.total = int(total)
@@ -38,6 +47,13 @@ class Recipe:
         self.url = url
 
     def __repr__(self):
-        return "<Recipe uid:%s \nname_h:%s \nname_e:%s \ningredients_h:%s \ningredients_e:%s \nprep:%i \ncook:%i \ntotal:%i \nservings:%i \ncuisine:%s \ncourse:%s \ndiet:%s instructions_h:%s, \ninstructions_e:%s \nurl:%s>" % (self.uid, self.name_h, self.name_e, str(self.ingredients_h), str(self.ingredients_e), self.prep, self.cook, self.total, self.servings, self.cuisine, self.course, self.diet, self.instructions_h, self.instructions_e, self.url)
+        return "<Recipe uid:%s \nname_h:%s \nname_e:%s \ningredients_h:%s \ningredients_e:%s \nprep:%i \ncook:%i \ntotal:%i \nservings:%i \ncuisine:%s \ncourse:%s \ndiet:%s instructions_h:%s, \ninstructions_e:%s \nurl:%s>" % (self.uid, self.name_h, self.name_e, self.ingredients_h, self.ingredients_e, self.prep, self.cook, self.total, self.servings, self.cuisine, self.course, self.diet, self.instructions_h, self.instructions_e, self.url)
+def search_ingredient(recipe, ingredient):
+    search_obj = re.search(ingredient, recipe.ingredients_e)
+    if search_obj:
+        return search_obj.group()
+    else:
+        return search_obj
+
 if __name__ == '__main__':
     main()
