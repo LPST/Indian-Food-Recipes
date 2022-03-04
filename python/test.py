@@ -9,7 +9,7 @@ def main():
     name_results = search_recipes(recipes, "name_e", name_term)
     ingred_term = "ghee"
     ingred_results = search_recipes(recipes, "ingredients_e", ingred_term)
-    cuisine_term = "continental"
+    cuisine_term = "indian"
     cuisine_results = search_recipes(recipes, "cuisine", cuisine_term)
     course_term = "lunch"
     course_results = search_recipes(recipes, "course", course_term)

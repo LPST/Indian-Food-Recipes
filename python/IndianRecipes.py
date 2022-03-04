@@ -2,16 +2,19 @@ import mymodule as mm
 
 def main():
     path = "IndianFoodDatasetxls.xlsx"
-    contents = mm.read_xlsx(path,20)
-    labels, recipes = extract_data(contents,20)
+    contents = mm.read_xlsx(path)
+    labels, recipes = extract_data(contents)
 
-    ingredient_dict = ingredient_counts(recipes)
-    high_ten = ('',0)
-    for key in ingredient_dict.keys():
-        for num in high_ten:
-            if high_ten(1) < ingredident_dict[key]:
-                high_ten = (key, ingredient_dict[key])
-    print(high_ten)
+    a = highest_attr_counts(recipes, "ingredients_e", 3)
+    b = highest_attr_counts(recipes, "cuisine", 3)
+    c = highest_attr_counts(recipes, "diet", 3)
+    d = highest_attr_counts(recipes, "course", 3)
+    
+    for x in [a,b,c,d]:
+        for pair in x:
+            print(pair)
+
+
 
 def extract_data(contents, num_rows=None):
     labels = contents[0]
@@ -46,12 +49,13 @@ class Recipe:
 
     def __repr__(self):
         return "<Recipe uid:%s \nname_h:%s \nname_e:%s \ningredients_h:%s \ningredients_e:%s \nprep:%i \ncook:%i \ntotal:%i \nservings:%i \ncuisine:%s \ncourse:%s \ndiet:%s instructions_h:%s, \ninstructions_e:%s \nurl:%s>" % (self.uid, self.name_h, self.name_e, self.ingredients_h, self.ingredients_e, self.prep, self.cook, self.total, self.servings, self.cuisine, self.course, self.diet, self.instructions_h, self.instructions_e, self.url)
+
     def search_attr(self, attr, value):
 
         if type(getattr(self, attr)) != str:
             print("Sorry, search_attr literally can't handle non-string attributes right now.")
             return None
-        elif getattr(self, attr).casefold().find(value) >= 0:
+        elif getattr(self, attr).casefold().find(value.casefold()) >= 0:
             return True
         else:
             return False
@@ -66,15 +70,25 @@ def search_recipes(recipes, attr, value):
             results.append(recipes[i])
     return results
 
-def ingredient_counts(recipes):
+def attr_counts(recipes, attr):
     #this will not distinguish between "2 cups butter" and "3 cups butter" because those strings are not identical. I think I need to use regex to get the word after the number and before the hyphen
     counts = {}
     for i in range(len(recipes)):
-        for ingredient in getattr(recipes[i], "ingredients_e").split(","):
+        for ingredient in getattr(recipes[i], attr).split(","):
             if ingredient in counts.keys():
-                counts.update((ingredient, counts[ingredient] + 1))
+                counts.update({ingredient:counts[ingredient] + 1})
             else:
-                counts[ingredient] = 1
+                counts.update({ingredient:1})
     return counts
+
+def highest_attr_counts(recipes, attr, n):
+    attr_dict = attr_counts(recipes, attr)
+    highest_n = [['',0]]*n
+    for key in attr_dict.keys():
+        for i in range(len(highest_n)):
+            if highest_n[i][1] < attr_dict[key]:
+                highest_n[i] = [key, attr_dict[key]]
+                break
+    return highest_n
 if __name__ == '__main__':
     main()
