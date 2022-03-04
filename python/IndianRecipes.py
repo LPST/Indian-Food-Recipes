@@ -2,25 +2,16 @@ import mymodule as mm
 
 def main():
     path = "IndianFoodDatasetxls.xlsx"
-    contents = mm.read_xlsx(path)
-    labels, recipes = extract_data(contents)
+    contents = mm.read_xlsx(path,20)
+    labels, recipes = extract_data(contents,20)
 
-    name_term = "masala"
-    name_results = search_recipes(recipes, "name_e", name_term)
-    ingred_term = "ghee"
-    ingred_results = search_recipes(recipes, "ingredients_e", ingred_term)
-    cuisine_term = "continental"
-    cuisine_results = search_recipes(recipes, "cuisine", cuisine_term)
-    course_term = "lunch"
-    course_results = search_recipes(recipes, "course", course_term)
-    diet_term = "vegetarian"
-    diet_results = search_recipes(recipes, "diet", diet_term)
-
-    print("Number of " + name_term + " recipes: " + str(len(name_results)))
-    print("Number of " + ingred_term + " recipes: " + str(len(ingred_results)))
-    print("Number of " + cuisine_term + " recipes: " + str(len(cuisine_results)))
-    print("Number of " + course_term + " recipes: " + str(len(course_results)))
-    print("Number of " + diet_term + " recipes: " + str(len(diet_results)))
+    ingredient_dict = ingredient_counts(recipes)
+    high_ten = ('',0)
+    for key in ingredient_dict.keys():
+        for num in high_ten:
+            if high_ten(1) < ingredident_dict[key]:
+                high_ten = (key, ingredient_dict[key])
+    print(high_ten)
 
 def extract_data(contents, num_rows=None):
     labels = contents[0]
@@ -75,5 +66,15 @@ def search_recipes(recipes, attr, value):
             results.append(recipes[i])
     return results
 
+def ingredient_counts(recipes):
+    #this will not distinguish between "2 cups butter" and "3 cups butter" because those strings are not identical. I think I need to use regex to get the word after the number and before the hyphen
+    counts = {}
+    for i in range(len(recipes)):
+        for ingredient in getattr(recipes[i], "ingredients_e").split(","):
+            if ingredient in counts.keys():
+                counts.update((ingredient, counts[ingredient] + 1))
+            else:
+                counts[ingredient] = 1
+    return counts
 if __name__ == '__main__':
     main()
